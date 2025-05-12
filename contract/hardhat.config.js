@@ -6,6 +6,7 @@ module.exports = {
   networks: {
     baseSepolia: {
       url: process.env.BASE_SEPOLIA_URL,
+      chainId: 84532,
       accounts: [process.env.MY_ACCOUNT]
     }
   }

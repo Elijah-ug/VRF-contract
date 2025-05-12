@@ -22,7 +22,6 @@ mapping(address => bool) public hasJoined;
 mapping(address => uint8) public guesses;
 mapping(address => bool) public hasDeposited;
 mapping(address => bool) public hasStaked;
-mapping(address => uint) public balances;
 mapping(address => uint) public playerBalances;
 mapping(address => bool) public hasGuessed;
 
@@ -73,14 +72,13 @@ event Withdrawal(address indexed player, uint256 amount);
 // ====Join game function====
 
 function depositToJoinGame() external payable{
-    require(gameActive || players.length == 0, "Game not accepting players");
     require(msg.value >= minimumDepositAmount , "Invalid entry fee");
     require(players.length < max_players, "Game is full");
     require(!hasJoined[msg.sender], "You've already joined");
     // add players to the game
     players.push(msg.sender);
     hasJoined[msg.sender] = true;
-    playerBalances[msg.sender] = msg.value;
+    playerBalances[msg.sender] += msg.value;
     hasDeposited[msg.sender] = true;
 
 
@@ -101,20 +99,20 @@ function _requestRandomNumber() private{
             emit RandomRequested(requestId);
 }
 // ==== stake function ====
-function playerStake() external payable{
+function playerStake(uint256 amount) external{
     require(hasDeposited[msg.sender], "You haven't deposited yet");
     require(!hasStaked[msg.sender], "You have already staked");
     require(playerBalances[msg.sender] >= requiredStakeAmount, "Invalid stake amount");
     // ensure that the stake is the same for all players
     if(totalStakers == 0){
-        requiredStakeAmount = msg.value;
+        requiredStakeAmount = amount;
     }else{
-        require(msg.value == requiredStakeAmount, "The stake amount should be equal for all participants");
+        require(amount == requiredStakeAmount, "The stake amount should be equal for all participants");
     }
 
     hasStaked[msg.sender] = true;
     playerBalances[msg.sender] -= requiredStakeAmount;
-    totalStaked += msg.value;
+    totalStaked += amount;
     totalStakers ++;
     if(totalStakers == players.length){
         isGuessingOpen = true;
@@ -124,7 +122,7 @@ function playerStake() external payable{
         emit EntryClosed(); // 🔔 Inform frontend that game entry is closed
        _requestRandomNumber();
     }
-    emit PlayersStaked(msg.sender, msg.value);
+    emit PlayersStaked(msg.sender, amount);
 }
 // ===== function to adjust the deposit amount
 function updateDepositAmount(uint256 _newAmount) external{
