@@ -28,9 +28,9 @@ const LastGameResult = () => {
     }, [contract])
     return (
         <div>
-            <div className="p-4 border rounded-lg shadow-md text-center w-lg mt-10">
-            <h2 className="text-lg font-bold mb-2">Last Round Results</h2>
-            <p><strong>Correct Number:</strong> {correctAnswer}</p>
+            <div className="p-4  rounded-lg shadow-md text-center w-lg mt-10 ml-10">
+            <h2 className="text-lg font-semibold mb-2">Last Round Results</h2>
+            <p><strong>Correct Number:</strong> {correctAnswer? correctAnswer: ""}</p>
             <p><strong>Winner(s):</strong></p>
             <ul className="list-disc list-inside">
                 {winners.length > 0 ? (
@@ -38,14 +38,15 @@ const LastGameResult = () => {
                         <li key={index}>{winner}</li>
                     ))
                 ) : (
-                    <li>No winners last round</li>
+                    <li>No winner(s) last round</li>
                 )}
             </ul>
             </div>
-            <div className="bg-blue-200">
+            <div className=" mt-2 bg-blue-20">
+            <h2 className="text-lg font-semibold mb-2">Last Round Results</h2>
                 {
                     players.map((player) =>
-                        <p>{ player}</p>
+                        <p className="text-green-600">{ player.slice(0, 6)}...{ player.slice(-4)}</p>
                     )
                 }
             </div>

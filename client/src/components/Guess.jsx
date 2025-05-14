@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLottery } from '../context/UseLotteryContextProvider';
 
 const Guess = () => {
    const { account, contract, isLoading } = useLottery();
        const [guess, setGuess] = useState("")
-       const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
+
        const handleSubmitNumber = async (e) => {
            e.preventDefault()
            if (!account || !contract) return alert("Please connect your wallet!")
@@ -29,8 +30,9 @@ const Guess = () => {
                setLoading(false)
            }
        }
+
        return (
-           <div className="p-4 border rounded-lg shadow-md text-center w-lg mt-10">
+           <div className="p-4 ml-10 rounded-lg shadow-md text-center w-lg mt-10">
                <form onSubmit={handleSubmitNumber} className="p-4 border rounded-lg shadow-md">
                    <h2 className="text-xl font-semibold mb-2">Guess the Number (1-15)</h2>
                    <input onChange={(e) => setGuess(e.target.value)} type="number" min="1" max="15" value={guess}

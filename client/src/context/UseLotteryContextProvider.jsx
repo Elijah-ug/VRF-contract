@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import { initialState, lotteryReducer } from './lotteryReducer';
 import { ethers } from "ethers";
-// import contractAbi from "../utils/ColorDropLottery.json";
-import contractAbi from "../../../contract/artifacts/contracts/ColorDropLottery .sol/ColorDropLottery.json"
+import contractAbi from "../utils/ColorDropLottery.json";
+// import contractAbi from "../../../contract/artifacts/contracts/ColorDropLottery .sol/ColorDropLottery.json"
 import { contractAddress } from '../config';
 
 // 1. Create the context

@@ -49,8 +49,9 @@ const StartLotteryButton = () => {
     }
 
     return (
-        <div className="p-4 border rounded-lg shadow-md text-center w-lg mt-10">
+        <div className="p-4  rounded-lg shadow-md text-center w-lg mt-10">
             <h2 className="text-lg font-bold mb-2">Game Status: {gameStatus}</h2>
+
             <div>
                 {!correctAnswer ? (<button
                 onClick={handleStartLottery}

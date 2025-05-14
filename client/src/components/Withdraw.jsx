@@ -54,7 +54,7 @@ console.log("The user balance is:%%%%%% ", balance)
         }
     }
     return (
-        <div className="p-4 border rounded-lg shadow-md text-center w-lg mt-10">
+        <div className="p-4 ml-10 rounded-lg shadow-md text-center w-lg mt-10">
             <form onSubmit={handleWithdraw} className="p-4  rounded-lg shadow-md">
                 <h2 className="text-xl font-semibold mb-2">Withdraw Balance</h2>
                 <p className="mb-2 text-sm text-gray-600">Available: {balance} ETH</p>

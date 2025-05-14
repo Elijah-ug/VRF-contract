@@ -53,11 +53,11 @@ const DepositForm = () => {
         }
     }
     return (
-        <div className="p-4 border rounded-lg shadow-md text-center w-lg mt-10">
+        <div className="p-4 border rounded-lg shadow-md text-center w-lg mt-10 ml-10">
            <h3 className="text-center"> {deposit ? `${ethers.formatEther(deposit)} ETH` : "No deposit yet"} </h3>
 
             <form onSubmit={handleDeposit} className="p-4 rounded-lg shadow-md">
-                <input onChange={(e) => setDepositAmount(e.target.value)} type="number" step="0.001" value={depositAmount}
+                <input onChange={(e) => setDepositAmount(e.target.value)} type="number" step="0.0001" value={depositAmount}
                      placeholder="Enter deposit amount in ETH" className="border p-2 rounded w-full mb-2" required />
                 <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                     disabled={isLoading || loading} type="submit">{loading ? "Depositing..." : "Deposit"}</button>

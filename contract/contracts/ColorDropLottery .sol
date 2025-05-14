@@ -14,6 +14,7 @@ uint256 public minimumDepositAmount = 0.0001 ether;
 uint public requiredStakeAmount;
 uint public totalStakers;
 address public owner;
+uint256 public gameRount;
 bool public locked;
 
 // ====game state====
@@ -39,7 +40,7 @@ event RandomFulfilled(uint randomWord);
 event PlayersStaked(address indexed player, uint amount);
 event MinimumDepositUpdated(uint256 newAmount);
 event Withdrawal(address indexed player, uint256 amount);
-
+event RoundReset(uint256 round, address indexed owner);
 
 // ✅ 1. Store the VRF coordinator and key hash as constants
     address constant VRF_COORDINATOR = 0x5C210eF41CD1a72de73bF76eC39637bB0d3d7BEE;
@@ -67,6 +68,10 @@ event Withdrawal(address indexed player, uint256 amount);
         gameActive = true;
         minimumDepositAmount  = _depositAmount;
         owner = msg.sender;
+    }
+    modifier onlyOwner {
+        require(msg.sender == owner, "You're not the owner");
+        _;
     }
 
 // ====Join game function====
@@ -145,18 +150,32 @@ function submitGuess(uint8 number) external{
     emit GameJoined(msg.sender, number);
 }
 // ===== function to resent the next round =====
-function resetNextRound() internal{
-    // require()
-    for(uint i = 0; i < players.length; i ++){
-        address player = players[i];
-        hasStaked[player] = false;
-        hasDeposited[player] = false;
-        hasGuessed[player] = false;
-        hasJoined[player] = false;
-        guesses[player] = 0;
-        playerBalances[player] = 0;
+event RoundReset(uint256 round, uint256 timestamp);
 
+function resetNextRound() external onlyOwner {
+    require(players.length <= 100, "Too many players to reset");
+
+    //reset player deposits before resetting
+    for(uint i = 0; i < players.length; i++){
+        address player = players[i];
+        //refund player deposits if any
+        uint256 playerDeposit = playerBalances[player];
+        if(playerDeposit > 0){
+            payable(player).transfer(playerDeposit);
+            emit Withdrawal(player, playerDeposit);
+        }
     }
+
+    for (uint i = 0; i < players.length; i++) {
+        address player = players[i];
+        delete hasStaked[player];
+        delete hasDeposited[player];
+        delete hasGuessed[player];
+        delete hasJoined[player];
+        delete guesses[player];
+        delete playerBalances[player];
+    }
+
     delete players;
     delete winners;
 
@@ -167,7 +186,11 @@ function resetNextRound() internal{
     randomResult = 0;
     gameActive = true;
     isGuessingOpen = false;
+
+    gameRount++; // if you're tracking rounds
+    emit RoundReset(gameRount, msg.sender);
 }
+
  // // === Close Entry After Timeout (does not end game yet) ===
  function checkTimeoutAndCloseEntry() external{
     require(gameActive == true, "The game has ended");
@@ -208,7 +231,6 @@ function fulfillRandomWords(uint256, uint256[] memory randomWords) internal over
 
         }
     }
-    resetNextRound();
 }
 // =====withdraw balances ====
 function withdrawBalances(uint _withdrawal) external payable noReentrency{
